@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rick and Morty - Personajes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0b1a12;
+            color: #e0f5ec;
+            min-height: 100vh;
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            background-color: #0b3d2e;
+            padding: 24px 20px 16px;
+            text-align: center;
+            border-bottom: 2px solid #1D9E75;
+        }
+
+        header h1 {
+            font-size: 28px;
+            color: #5DCAA5;
+            letter-spacing: 3px;
+            margin-bottom: 4px;
+        }
+
+        header p {
+            font-size: 13px;
+            color: #9FE1CB;
+            opacity: 0.75;
+        }
+
+        /* ===== CONTROLES (buscar + filtros) ===== */
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 16px 20px;
+            background-color: #112b1e;
+            border-bottom: 1px solid #1a4a32;
+            align-items: center;
+        }
+
+        .search-wrap {
+            position: relative;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .search-wrap svg {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9FE1CB;
+            pointer-events: none;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 9px 12px 9px 36px;
+            border-radius: 8px;
+            border: 1px solid #1D9E75;
+            background-color: #0b2a1e;
+            color: #e0f5ec;
+            font-size: 14px;
+            outline: none;
+            transition: box-shadow 0.2s;
+        }
+
+        #searchInput:focus {
+            box-shadow: 0 0 0 3px rgba(29, 158, 117, 0.25);
+        }
+
+        #searchInput::placeholder {
+            color: #5DCAA5;
+            opacity: 0.6;
+        }
+
+        /* ===== FILTROS DE ESPECIE ===== */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .filter-btn {
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: 1px solid #1D9E75;
+            background-color: transparent;
+            color: #9FE1CB;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .filter-btn:hover {
+            background-color: #1D9E75;
+            color: #0b3d2e;
+        }
+
+        .filter-btn.active {
+            background-color: #1D9E75;
+            color: #0b3d2e;
+            font-weight: bold;
+        }
+
+        /* ===== BARRA DE ESTADO ===== */
+        .stats-bar {
+            padding: 8px 20px;
+            font-size: 12px;
+            color: #5DCAA5;
+            background-color: #0d2218;
+            border-bottom: 1px solid #1a4a32;
+        }
+
+        /* ===== GRID DE PERSONAJES ===== */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 16px;
+            padding: 20px;
+        }
+
+        /* ===== TARJETA ===== */
+        .card {
+            background-color: #0f2b1e;
+            border: 1px solid #1a4a32;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: #1D9E75;
+        }
+
+        .card img {
+            width: 100%;
+            aspect-ratio: 1;
+            display: block;
+            object-fit: cover;
+        }
+
+        .card-info {
+            padding: 10px 12px 14px;
+        }
+
+        .card-info h2 {
+            font-size: 14px;
+            font-weight: bold;
+            color: #e0f5ec;
+            margin-bottom: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ===== BADGE ESPECIE ===== */
+        .badge {
+            display: inline-block;
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .badge-Human        { background-color: #1a3a5c; color: #85B7EB; }
+        .badge-Alien        { background-color: #0b3d2e; color: #5DCAA5; }
+        .badge-Humanoid     { background-color: #2a1f5c; color: #AFA9EC; }
+        .badge-Robot        { background-color: #2c2c2a; color: #B4B2A9; }
+        .badge-Animal       { background-color: #3b2a0a; color: #FAC775; }
+        .badge-Disease      { background-color: #3d0f0f; color: #F09595; }
+        .badge-Mythological { background-color: #3d1a0f; color: #F0997B; }
+        .badge-Poopybutthole{ background-color: #3d1a2a; color: #ED93B1; }
+        .badge-unknown      { background-color: #1f1f1e; color: #888780; }
+
+        /* ===== ESTADO (vivo/muerto) ===== */
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #9FE1CB;
+            opacity: 0.8;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .dot-Alive   { background-color: #639922; }
+        .dot-Dead    { background-color: #E24B4A; }
+        .dot-unknown { background-color: #888780; }
+
+        /* ===== ESTADO VACÍO ===== */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            color: #5DCAA5;
+            opacity: 0.6;
+            font-size: 15px;
+        }
+
+        /* ===== LOADING ===== */
+        .loading {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            padding: 60px 20px;
+            font-size: 15px;
+            color: #5DCAA5;
+        }
+
+        .spinner {
+            width: 22px;
+            height: 22px;
+            border: 3px solid #1a4a32;
+            border-top-color: #1D9E75;
+            border-radius: 50%;
+            animation: spin 0.75s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ===== PAGINACIÓN ===== */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px 32px;
+        }
+
+        .page-btn {
+            padding: 7px 20px;
+            border-radius: 8px;
+            border: 1px solid #1D9E75;
+            background-color: transparent;
+            color: #5DCAA5;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background-color: #1D9E75;
+            color: #0b3d2e;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .page-info {
+            font-size: 13px;
+            color: #9FE1CB;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>RICK AND MORTY</h1>
+        <p>Directorio del multiverso</p>
+    </header>
+
+    <div class="controls">
+        <!-- Búsqueda por nombre -->
+        <div class="search-wrap">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
+            <input type="text" id="searchInput" placeholder="Buscar personaje por nombre..." />
+        </div>
+
+        <!-- Filtros de especie (se generan con JS) -->
+        <div class="filters" id="filters">
+            <button class="filter-btn active" data-species="all">Todos</button>
+        </div>
+    </div>
+
+    <div class="stats-bar" id="statsBar">Cargando personajes...</div>
+
+    <div class="grid" id="grid">
+        <div class="loading">
+            <div class="spinner"></div>
+            Conectando con la API del multiverso...
+        </div>
+    </div>
+
+    <div class="pagination" id="pagination"></div>
+
+    <script>
+        // =============================================
+        //  VARIABLES GLOBALES
+        // =============================================
+        let todosLosPersonajes = [];  // Todos los personajes descargados de la API
+        let personajesFiltrados = []; // Resultado de aplicar búsqueda + filtro de especie
+        let especieActiva = 'all';    // Filtro de especie seleccionado
+        let textoBusqueda = '';       // Texto del input de búsqueda
+        let paginaActual = 1;
+        const POR_PAGINA = 20;        // Cuántos personajes mostrar por página
+
+        // =============================================
+        //  1. OBTENER TODOS LOS PERSONAJES DE LA API
+        //     La API entrega 20 personajes por página,
+        //     así que hacemos múltiples fetch hasta
+        //     que no haya más páginas (next === null).
+        // =============================================
+        async function obtenerTodos() {
+            let resultados = [];
+            let url = 'https://rickandmortyapi.com/api/character';
+
+            while (url) {
+                const respuesta = await fetch(url);
+                const datos = await respuesta.json();
+                resultados = resultados.concat(datos.results);
+                url = datos.info.next; // null cuando no hay más páginas
+            }
+
+            return resultados;
+        }
+
+        // =============================================
+        //  2. CONSTRUIR BOTONES DE FILTRO POR ESPECIE
+        //     Se extraen las especies únicas del array
+        //     y se crea un botón por cada una.
+        // =============================================
+        function construirFiltros() {
+            const especies = [...new Set(todosLosPersonajes.map(p => p.species))].sort();
+            const contenedor = document.getElementById('filters');
+
+            // Botón "Todos" siempre primero
+            contenedor.innerHTML = '<button class="filter-btn active" data-species="all">Todos</button>';
+
+            especies.forEach(especie => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-btn';
+                btn.dataset.species = especie;
+                btn.textContent = especie || 'Desconocido';
+                contenedor.appendChild(btn);
+            });
+
+            // Evento click en el contenedor (delegación de eventos)
+            contenedor.addEventListener('click', function(e) {
+                const btn = e.target.closest('.filter-btn');
+                if (!btn) return;
+
+                // Quitar "active" de todos y ponerlo en el clickeado
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                especieActiva = btn.dataset.species;
+                paginaActual = 1;
+                aplicarFiltros();
+            });
+        }
+
+        // =============================================
+        //  3. APLICAR FILTROS
+        //     Filtra el array global con los criterios
+        //     de especie y texto de búsqueda.
+        // =============================================
+        function aplicarFiltros() {
+            personajesFiltrados = todosLosPersonajes.filter(personaje => {
+                const coincideEspecie = especieActiva === 'all' || personaje.species === especieActiva;
+                const coincideNombre  = personaje.name.toLowerCase().includes(textoBusqueda);
+                return coincideEspecie && coincideNombre;
+            });
+
+            renderizarGrid();
+            renderizarPaginacion();
+
+            // Actualizar barra de estado
+            let info = `${personajesFiltrados.length} personaje${personajesFiltrados.length !== 1 ? 's' : ''} encontrado${personajesFiltrados.length !== 1 ? 's' : ''}`;
+            if (especieActiva !== 'all') info += ` · Especie: ${especieActiva}`;
+            if (textoBusqueda) info += ` · Búsqueda: "${textoBusqueda}"`;
+            document.getElementById('statsBar').textContent = info;
+        }
+
+        // =============================================
+        //  4. RENDERIZAR TARJETAS EN EL GRID
+        //     Solo muestra los personajes de la
+        //     página actual (paginación).
+        // =============================================
+        function renderizarGrid() {
+            const grid = document.getElementById('grid');
+            const inicio = (paginaActual - 1) * POR_PAGINA;
+            const personajesPagina = personajesFiltrados.slice(inicio, inicio + POR_PAGINA);
+
+            if (personajesPagina.length === 0) {
+                grid.innerHTML = '<div class="empty-state">No se encontraron personajes con ese criterio.</div>';
+                return;
+            }
+
+            grid.innerHTML = '';
+
+            personajesPagina.forEach(personaje => {
+                // Elegir clase CSS del badge según especie
+                const claseEspecie = obtenerClaseEspecie(personaje.species);
+
+                const tarjeta = document.createElement('article');
+                tarjeta.className = 'card';
+                tarjeta.innerHTML = `
+                    <img src="${personaje.image}" alt="${personaje.name}" loading="lazy">
+                    <div class="card-info">
+                        <h2 title="${personaje.name}">${personaje.name}</h2>
+                        <span class="badge ${claseEspecie}">${personaje.species}</span>
+                        <div class="status">
+                            <span class="dot dot-${personaje.status}"></span>
+                            ${personaje.status}
+                        </div>
+                    </div>
+                `;
+
+                grid.appendChild(tarjeta);
+            });
+        }
+
+        // =============================================
+        //  5. RENDERIZAR PAGINACIÓN
+        // =============================================
+        function renderizarPaginacion() {
+            const totalPaginas = Math.ceil(personajesFiltrados.length / POR_PAGINA);
+            const contenedor = document.getElementById('pagination');
+
+            if (totalPaginas <= 1) {
+                contenedor.innerHTML = '';
+                return;
+            }
+
+            contenedor.innerHTML = `
+                <button class="page-btn" id="btnAnterior" ${paginaActual === 1 ? 'disabled' : ''}>← Anterior</button>
+                <span class="page-info">Página ${paginaActual} de ${totalPaginas}</span>
+                <button class="page-btn" id="btnSiguiente" ${paginaActual === totalPaginas ? 'disabled' : ''}>Siguiente →</button>
+            `;
+
+            document.getElementById('btnAnterior').addEventListener('click', () => {
+                paginaActual--;
+                renderizarGrid();
+                renderizarPaginacion();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            document.getElementById('btnSiguiente').addEventListener('click', () => {
+                paginaActual++;
+                renderizarGrid();
+                renderizarPaginacion();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+
+        // =============================================
+        //  6. HELPER: clase CSS para el badge de especie
+        // =============================================
+        function obtenerClaseEspecie(especie) {
+            const mapa = {
+                'Human':                 'badge-Human',
+                'Alien':                 'badge-Alien',
+                'Humanoid':              'badge-Humanoid',
+                'Robot':                 'badge-Robot',
+                'Animal':                'badge-Animal',
+                'Disease':               'badge-Disease',
+                'Mythological Creature': 'badge-Mythological',
+                'Poopybutthole':         'badge-Poopybutthole',
+                'unknown':               'badge-unknown',
+            };
+            return mapa[especie] || 'badge-unknown';
+        }
+
+        // =============================================
+        //  7. EVENTO: búsqueda en tiempo real
+        // =============================================
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            textoBusqueda = e.target.value.toLowerCase().trim();
+            paginaActual = 1;
+            aplicarFiltros();
+        });
+
+        // =============================================
+        //  8. INICIO: cargar personajes
+        // =============================================
+        obtenerTodos()
+            .then(personajes => {
+                todosLosPersonajes = personajes;
+                construirFiltros();
+                aplicarFiltros();
+            })
+            .catch(error => {
+                document.getElementById('grid').innerHTML =
+                    '<div class="empty-state">Error al conectar con la API. Verifica tu conexión.</div>';
+                document.getElementById('statsBar').textContent = 'Error de conexión.';
+                console.error(error);
+            });
+    </script>
+
+</body>
+</html>

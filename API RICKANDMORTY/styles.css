@@ -1,0 +1,297 @@
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #0b1a12;
+    color: #e0f5ec;
+    min-height: 100vh;
+}
+
+/* ============================================================
+   CONTENEDOR CENTRAL
+   Centra todo el contenido con un ancho máximo
+   ============================================================ */
+.page-wrapper {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+header {
+    background-color: #0b3d2e;
+    border-bottom: 2px solid #1D9E75;
+    padding: 24px 20px 16px;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 28px;
+    color: #5DCAA5;
+    letter-spacing: 3px;
+    margin-bottom: 4px;
+}
+
+header p {
+    font-size: 13px;
+    color: #9FE1CB;
+    opacity: 0.75;
+}
+
+/* ============================================================
+   CONTROLES (buscar + filtros)
+   ============================================================ */
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px 0;
+    align-items: center;
+}
+
+/* ---- Buscador ---- */
+.search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+}
+
+.search-wrap svg {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9FE1CB;
+    pointer-events: none;
+}
+
+#searchInput {
+    width: 100%;
+    padding: 9px 12px 9px 36px;
+    border-radius: 8px;
+    border: 1px solid #1D9E75;
+    background-color: #0b2a1e;
+    color: #e0f5ec;
+    font-size: 14px;
+    outline: none;
+    transition: box-shadow 0.2s;
+}
+
+#searchInput:focus {
+    box-shadow: 0 0 0 3px rgba(29, 158, 117, 0.25);
+}
+
+#searchInput::placeholder {
+    color: #5DCAA5;
+    opacity: 0.6;
+}
+
+/* ---- Filtros de especie ---- */
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.filter-btn {
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1px solid #1D9E75;
+    background-color: transparent;
+    color: #9FE1CB;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+.filter-btn:hover  { background-color: #1D9E75; color: #0b3d2e; }
+.filter-btn.active { background-color: #1D9E75; color: #0b3d2e; font-weight: bold; }
+
+/* ============================================================
+   BARRA DE ESTADO
+   ============================================================ */
+.stats-bar {
+    padding: 8px 0;
+    font-size: 12px;
+    color: #5DCAA5;
+    border-bottom: 1px solid #1a4a32;
+    margin-bottom: 4px;
+}
+
+/* ============================================================
+   GRID DE PERSONAJES
+   Centrado y responsivo con columnas uniformes
+   ============================================================ */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+    padding: 24px 0;
+    justify-items: center; /* centra cada tarjeta dentro de su celda */
+}
+
+/* ============================================================
+   TARJETA
+   ============================================================ */
+.card {
+    background-color: #0f2b1e;
+    border: 1px solid #1a4a32;
+    border-radius: 12px;
+    overflow: hidden;
+    width: 100%;           /* ocupa el ancho de la celda */
+    max-width: 220px;      /* tope para pantallas muy anchas */
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    border-color: #1D9E75;
+}
+
+.card img {
+    width: 100%;
+    aspect-ratio: 1;
+    display: block;
+    object-fit: cover;
+}
+
+.card-info {
+    padding: 10px 12px 14px;
+}
+
+.card-info h2 {
+    font-size: 14px;
+    font-weight: bold;
+    color: #e0f5ec;
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ============================================================
+   BADGES DE ESPECIE
+   ============================================================ */
+.badge {
+    display: inline-block;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+.badge-Human         { background-color: #1a3a5c; color: #85B7EB; }
+.badge-Alien         { background-color: #0b3d2e; color: #5DCAA5; }
+.badge-Humanoid      { background-color: #2a1f5c; color: #AFA9EC; }
+.badge-Robot         { background-color: #2c2c2a; color: #B4B2A9; }
+.badge-Animal        { background-color: #3b2a0a; color: #FAC775; }
+.badge-Disease       { background-color: #3d0f0f; color: #F09595; }
+.badge-Mythological  { background-color: #3d1a0f; color: #F0997B; }
+.badge-Poopybutthole { background-color: #3d1a2a; color: #ED93B1; }
+.badge-unknown       { background-color: #1f1f1e; color: #888780; }
+
+/* ============================================================
+   ESTADO (vivo / muerto)
+   ============================================================ */
+.status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #9FE1CB;
+    opacity: 0.8;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.dot-Alive   { background-color: #639922; }
+.dot-Dead    { background-color: #E24B4A; }
+.dot-unknown { background-color: #888780; }
+
+/* ============================================================
+   ESTADOS ESPECIALES: vacío / cargando
+   ============================================================ */
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: #5DCAA5;
+    opacity: 0.6;
+    font-size: 15px;
+}
+
+.loading {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    padding: 60px 20px;
+    font-size: 15px;
+    color: #5DCAA5;
+}
+
+.spinner {
+    width: 22px;
+    height: 22px;
+    border: 3px solid #1a4a32;
+    border-top-color: #1D9E75;
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ============================================================
+   PAGINACIÓN
+   ============================================================ */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 0 40px;
+}
+
+.page-btn {
+    padding: 7px 20px;
+    border-radius: 8px;
+    border: 1px solid #1D9E75;
+    background-color: transparent;
+    color: #5DCAA5;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+.page-btn:hover:not(:disabled) {
+    background-color: #1D9E75;
+    color: #0b3d2e;
+}
+
+.page-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.page-info {
+    font-size: 13px;
+    color: #9FE1CB;
+}
